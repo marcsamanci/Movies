@@ -43,36 +43,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     private ImageAdapter imag_adap;
-
-    @Override
-    /*
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.activity_main);
-
-        ArrayList<String> list = new ArrayList<String>();
-        list.add("Coucou c'est moi");
-        list.add("B");
-        list.add("C");
-        list.add("D");
-
-        // The ArrayAdapter will take data from a source and
-        // use it to populate the ListView it's attached to.
-        mForecastAdapter =
-                new ArrayAdapter<String>(
-                        this, // The current context (this activity)
-                        R.layout.list_item_movies, // The name of the layout ID.
-                        R.id.list_item_movies_textview, // The ID of the textview to populate.
-                        list);
-
-        // Get a reference to the ListView, and attach this adapter to it.
-        ListView listView = (ListView) this.findViewById(R.id.listview_movies);
-        listView.setAdapter(mForecastAdapter);
-
-       // setHasOptionsMenu(true);
-    }
-*/
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
@@ -87,10 +57,6 @@ public class MainActivity extends AppCompatActivity {
        // FetchMoviesTask f = new FetchMoviesTask();
         //f.execute();
 
-        // "http://api.themoviedb.org/3/movie/popular?api_key=a84497c51a82ea19b9e709139688765f" :
-
-
-
         /// salut
         /*
         gridview.setOnItemClickListener(new OnItemClickListener() {
@@ -101,9 +67,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         */
-
-
-
     }
 
     @Override
@@ -132,93 +95,6 @@ public class MainActivity extends AppCompatActivity {
 
         private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
 
-        /**
-         * Take the String representing the complete forecast in JSON Format and
-         * pull out the data we need to construct the Strings needed for the wireframes.
-         * <p/>
-         * Fortunately parsing is easy:  constructor takes the JSON string and converts it
-         * into an Object hierarchy for us.
-         * <p/>
-         * private String[] getWeatherDataFromJson(String forecastJsonStr, int numDays)
-         * throws JSONException {
-         * <p/>
-         * // These are the names of the JSON objects that need to be extracted.
-         * final String OWM_LIST = "list";
-         * final String OWM_WEATHER = "weather";
-         * final String OWM_TEMPERATURE = "temp";
-         * final String OWM_MAX = "max";
-         * final String OWM_MIN = "min";
-         * final String OWM_DESCRIPTION = "main";
-         * <p/>
-         * JSONObject forecastJson = new JSONObject(forecastJsonStr);
-         * JSONArray weatherArray = forecastJson.getJSONArray(OWM_LIST);
-         * <p/>
-         * // OWM returns daily forecasts based upon the local time of the city that is being
-         * // asked for, which means that we need to know the GMT offset to translate this data
-         * // properly.
-         * <p/>
-         * // Since this data is also sent in-order and the first day is always the
-         * // current day, we're going to take advantage of that to get a nice
-         * // normalized UTC date for all of our weather.
-         * <p/>
-         * Time dayTime = new Time();
-         * dayTime.setToNow();
-         * <p/>
-         * // we start at the day returned by local time. Otherwise this is a mess.
-         * int julianStartDay = Time.getJulianDay(System.currentTimeMillis(), dayTime.gmtoff);
-         * <p/>
-         * // now we work exclusively in UTC
-         * dayTime = new Time();
-         * <p/>
-         * String[] resultStrs = new String[numDays];
-         * <p/>
-         * // Data is fetched in Celsius by default.
-         * // If user prefers to see in Fahrenheit, convert the values here.
-         * // We do this rather than fetching in Fahrenheit so that the user can
-         * // change this option without us having to re-fetch the data once
-         * // we start storing the values in a database.
-         * SharedPreferences sharedPrefs =
-         * PreferenceManager.getDefaultSharedPreferences(getActivity());
-         * String unitType = sharedPrefs.getString(
-         * getString(R.string.pref_units_key),
-         * getString(R.string.pref_units_metric));
-         * <p/>
-         * for(int i = 0; i < weatherArray.length(); i++) {
-         * // For now, using the format "Day, description, hi/low"
-         * String day;
-         * String description;
-         * String highAndLow;
-         * <p/>
-         * // Get the JSON object representing the day
-         * JSONObject dayForecast = weatherArray.getJSONObject(i);
-         * <p/>
-         * // The date/time is returned as a long.  We need to convert that
-         * // into something human-readable, since most people won't read "1400356800" as
-         * // "this saturday".
-         * long dateTime;
-         * // Cheating to convert this to UTC time, which is what we want anyhow
-         * dateTime = dayTime.setJulianDay(julianStartDay+i);
-         * day = getReadableDateString(dateTime);
-         * <p/>
-         * // description is in a child array called "weather", which is 1 element long.
-         * JSONObject weatherObject = dayForecast.getJSONArray(OWM_WEATHER).getJSONObject(0);
-         * description = weatherObject.getString(OWM_DESCRIPTION);
-         * <p/>
-         * // Temperatures are in a child object called "temp".  Try not to name variables
-         * // "temp" when working with temperature.  It confuses everybody.
-         * JSONObject temperatureObject = dayForecast.getJSONObject(OWM_TEMPERATURE);
-         * double high = temperatureObject.getDouble(OWM_MAX);
-         * double low = temperatureObject.getDouble(OWM_MIN);
-         * <p/>
-         * highAndLow = formatHighLows(high, low, unitType);
-         * resultStrs[i] = day + " - " + description + " - " + highAndLow;
-         * }
-         * return resultStrs;
-         * <p/>
-         * }
-         */
-
-
         @Override
         protected ArrayList<HashMap> doInBackground(String... params) {
 
@@ -240,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
 
                 final String MOVIES_BASE_URL =
                         "http://api.themoviedb.org/3/movie/";
-                final String MODE_PARAM = "popular";
+                final String MODE_PARAM = "top_rated";
                 final String api_key = "api_key";
 
 
