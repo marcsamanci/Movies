@@ -8,9 +8,11 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.format.Time;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -18,6 +20,7 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -29,15 +32,17 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
 
-    private ArrayAdapter<String> mForecastAdapter;
+    private ImageAdapter imag_adap;
 
     @Override
     /*
@@ -70,15 +75,17 @@ public class MainActivity extends AppCompatActivity {
 */
     public void onCreate(Bundle savedInstanceState) {
 
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         GridView gridview = (GridView) findViewById(R.id.gridview);
-        gridview.setAdapter(new ImageAdapter(this));
 
-        FetchMoviesTask f = new FetchMoviesTask() ;
-        f.execute() ;
+        imag_adap = new ImageAdapter(this) ;
+
+        gridview.setAdapter(imag_adap);
+
+       // FetchMoviesTask f = new FetchMoviesTask();
+        //f.execute();
 
         // "http://api.themoviedb.org/3/movie/popular?api_key=a84497c51a82ea19b9e709139688765f" :
 
@@ -106,8 +113,22 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_refresh:
+                FetchMoviesTask f = new FetchMoviesTask() ;
+                f.execute() ;
+                Log.e("MONTAG", "salut");
+                return true ;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
-    public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
+
+    public class FetchMoviesTask extends AsyncTask<String, Void, ArrayList<HashMap>> {
 
         private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
 
@@ -196,13 +217,15 @@ public class MainActivity extends AppCompatActivity {
          * <p/>
          * }
          */
+
+
         @Override
-        protected String[] doInBackground(String... params) {
+        protected ArrayList<HashMap> doInBackground(String... params) {
 
             // If there's no zip code, there's nothing to look up.  Verify size of params.
-            if (params.length == 0) {
-                return null;
-            }
+           // if (params.length == 0) {
+          //      return null;
+          //  }
 
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
@@ -225,9 +248,6 @@ public class MainActivity extends AppCompatActivity {
                         .appendPath(MODE_PARAM)
                         .appendQueryParameter(api_key, "a84497c51a82ea19b9e709139688765f")
                         .build();
-
-
-                Log.i("MON TAG", builtUri.toString());
 
                 URL url = new URL(builtUri.toString());
 
@@ -276,8 +296,52 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-            Log.i(LOG_TAG, forecastJsonStr);
-            return new String[] {forecastJsonStr};
+
+            try{
+                return getMoviesDataFromJson(forecastJsonStr);
+            } catch (JSONException e) {
+                Log.e(LOG_TAG, e.getMessage(), e);
+                e.printStackTrace();
+            }
+                return null ;
+        }
+
+
+        private ArrayList<HashMap> getMoviesDataFromJson(String json) throws JSONException{
+
+            JSONObject forecastJson = new JSONObject(json);
+            JSONArray weatherArray = forecastJson.getJSONArray("results");
+
+            ArrayList<HashMap> resultat = new ArrayList<>();
+            for(int i = 0; i < weatherArray.length(); i++) {
+
+                JSONObject obj = weatherArray.getJSONObject(i) ;
+                HashMap movie = new HashMap<String, String>() ;
+                movie.put("path", obj.getString("poster_path")) ;
+                movie.put("id", obj.getString("id")) ;
+
+                resultat.add(movie) ;
+            }
+
+            return resultat ;
+        }
+
+
+        @Override
+        protected void onPostExecute(ArrayList<HashMap> result) {
+            if (result != null) {
+
+                ArrayList<String> mThumbUris = imag_adap.getUriList() ;
+                mThumbUris.clear() ;
+
+                for(HashMap dayForecastStr : result) {
+                    mThumbUris.add((String) dayForecastStr.get("path")) ;
+                }
+
+                imag_adap.notifyDataSetChanged();
+
+                // New data is back from the server.  Hooray!
+            }
         }
 
     }

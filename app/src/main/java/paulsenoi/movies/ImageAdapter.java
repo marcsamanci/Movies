@@ -9,17 +9,28 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import paulsenoi.movies.R;
 
 public class ImageAdapter extends BaseAdapter {
     private Context mContext;
 
+    private ArrayList<String> mThumbUris;
+
+
     public ImageAdapter(Context c) {
+
         mContext = c;
+
+
+        mThumbUris = new ArrayList<String>() ;
+        mThumbUris.add("/5N20rQURev5CNDcMjHVUZhpoCNC.jpg") ;
     }
 
     public int getCount() {
-        return mThumbIds.length;
+        return mThumbUris.size();
     }
 
     public Object getItem(int position) {
@@ -47,24 +58,20 @@ public class ImageAdapter extends BaseAdapter {
         // imageView.setImageResource(mThumbIds[position]);
 
         Picasso.with(mContext).
-                load("http://image.tmdb.org/t/p/w185//nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg").into(imageView);
-
+                load("http://image.tmdb.org/t/p/w185/" + mThumbUris.get(position)).into(imageView);
 
         return imageView;
     }
 
     // references to our images
-    private Integer[] mThumbIds = {
-            R.drawable.sample_2, R.drawable.sample_3,
-            R.drawable.sample_4, R.drawable.sample_5,
-            R.drawable.sample_6, R.drawable.sample_7,
-            R.drawable.sample_0, R.drawable.sample_1,
-            R.drawable.sample_2, R.drawable.sample_3,
-            R.drawable.sample_4, R.drawable.sample_5,
-            R.drawable.sample_6, R.drawable.sample_7,
-            R.drawable.sample_0, R.drawable.sample_1,
-            R.drawable.sample_2, R.drawable.sample_3,
-            R.drawable.sample_4, R.drawable.sample_5,
-            R.drawable.sample_6, R.drawable.sample_7
-    };
+
+
+    public ArrayList<String> getUriList(){
+        return mThumbUris;
+    }
+
+
+
+
+
 }
