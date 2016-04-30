@@ -15,11 +15,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
@@ -39,7 +41,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
 
     private ImageAdapter imag_adap;
@@ -67,6 +69,37 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         */
+
+
+        Spinner spinner = (Spinner) findViewById(R.id.mode_spinner);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.mode_array, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(this);
+
+    }
+
+    @Override
+    // correspond au spinner
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        if(position == 0) {
+            FetchMoviesTask f = new FetchMoviesTask() ;
+            f.execute("top_rated") ;
+        }
+        else if(position == 1)
+        {
+            FetchMoviesTask f = new FetchMoviesTask() ;
+            f.execute("popular") ;
+        }
+    }
+
+    // correspond au spinner
+    public void onNothingSelected(AdapterView<?> parent) {
+        // Another interface callback
     }
 
     @Override
@@ -82,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_refresh:
                 FetchMoviesTask f = new FetchMoviesTask() ;
-                f.execute() ;
+                f.execute("top_rated") ;
                 Log.e("MONTAG", "salut");
                 return true ;
             default:
@@ -116,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
 
                 final String MOVIES_BASE_URL =
                         "http://api.themoviedb.org/3/movie/";
-                final String MODE_PARAM = "top_rated";
+                final String MODE_PARAM = params[0];
                 final String api_key = "api_key";
 
 

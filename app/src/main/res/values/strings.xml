@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Movies</string>
+
+    <string-array name="mode_array">
+        <item>Top rated</item>
+        <item>Popular</item>
+    </string-array>
+
+
 </resources>
