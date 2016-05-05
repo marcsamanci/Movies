@@ -1,30 +1,19 @@
 package paulsenoi.movies;
 
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.format.Time;
-import android.util.ArrayMap;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.Toast;
-
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,15 +23,18 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
+    public void setArray_movies(ArrayList<HashMap> array_movies) {
+        this.array_movies = array_movies;
+    }
+
+    private ArrayList<HashMap> array_movies ;
 
     private ImageAdapter imag_adap;
     public void onCreate(Bundle savedInstanceState) {
@@ -56,19 +48,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         gridview.setAdapter(imag_adap);
 
-       // FetchMoviesTask f = new FetchMoviesTask();
-        //f.execute();
 
-        /// salut
-        /*
-        gridview.setOnItemClickListener(new OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v,
-                                    int position, long id) {
-                Toast.makeText(HelloGridView.this, "" + position,
-                        Toast.LENGTH_SHORT).show();
+        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+
+            startActivity(new Intent(getApplication(), DetailActivity.class).putExtra("movie",
+                    array_movies.get(position)
+                ));
             }
-        });
-        */
+        }) ;
 
 
         Spinner spinner = (Spinner) findViewById(R.id.mode_spinner);
@@ -131,10 +121,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         @Override
         protected ArrayList<HashMap> doInBackground(String... params) {
 
-            // If there's no zip code, there's nothing to look up.  Verify size of params.
-           // if (params.length == 0) {
-          //      return null;
-          //  }
+
 
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
@@ -228,6 +215,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 HashMap movie = new HashMap<String, String>() ;
                 movie.put("path", obj.getString("poster_path")) ;
                 movie.put("id", obj.getString("id")) ;
+                movie.put("overview", obj.getString("overview")) ;
+                movie.put("release_date", obj.getString("release_date")) ;
+                movie.put("title", obj.getString("title")) ;
+               // movie.put("vote_overage", obj.getString("vote_overage")) ;
 
                 resultat.add(movie) ;
             }
@@ -237,19 +228,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
         @Override
-        protected void onPostExecute(ArrayList<HashMap> result) {
-            if (result != null) {
+        protected void onPostExecute(ArrayList<HashMap> array_movies) {
+            if (array_movies != null) {
 
                 ArrayList<String> mThumbUris = imag_adap.getUriList() ;
                 mThumbUris.clear() ;
 
-                for(HashMap dayForecastStr : result) {
-                    mThumbUris.add((String) dayForecastStr.get("path")) ;
+                for(HashMap movie : array_movies) {
+                    mThumbUris.add((String) movie.get("path")) ;
                 }
 
                 imag_adap.notifyDataSetChanged();
 
-                // New data is back from the server.  Hooray!
+                setArray_movies(array_movies);
             }
         }
 

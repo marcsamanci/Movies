@@ -24,9 +24,8 @@ public class ImageAdapter extends BaseAdapter {
 
         mContext = c;
 
-
         mThumbUris = new ArrayList<String>() ;
-        mThumbUris.add("/5N20rQURev5CNDcMjHVUZhpoCNC.jpg") ;
+
     }
 
     public int getCount() {
@@ -48,9 +47,9 @@ public class ImageAdapter extends BaseAdapter {
             // if it's not recycled, initialize some attributes
             imageView = new ImageView(mContext);
             imageView.setAdjustViewBounds(true) ;
-            imageView.setLayoutParams(new GridView.LayoutParams(300, 300));
+            imageView.setLayoutParams(new GridView.LayoutParams(400, 400));
             // imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            imageView.setPadding(8, 8, 8, 8);
+            imageView.setPadding(2, 2, 2, 2);
         } else {
             imageView = (ImageView) convertView;
         }
