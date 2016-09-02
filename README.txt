@@ -1,0 +1,1 @@
+Application Android pour cinéphile qui permet de visualiser des listes de films selon des critères de popularité et d'accéder au détail de ces films.
